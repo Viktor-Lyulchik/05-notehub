@@ -1,0 +1,12 @@
+.text {
+    font-size: 16px;
+    text-align: center;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    color: #d32f2f;
+    background-color: #fdecea;
+    border-color: #f5c2c0;
+}
