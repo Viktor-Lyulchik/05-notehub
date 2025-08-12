@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import css from './NoteForm.module.css';
 import type { NotePost } from '../../types/note';
 import { createNote } from '../../services/noteService';
+import toast from 'react-hot-toast';
 
 const initialFormValues: NotePost = {
   title: '',
@@ -31,10 +32,13 @@ interface NoteFormProps {
 export default function NoteForm({ onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
 
-  const { mutate: postMutation } = useMutation({
+  const { mutate: postMutation, isPending } = useMutation({
     mutationFn: createNote,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
+    },
+    onError() {
+      toast.error('Error creating note!');
     },
   });
 
@@ -88,7 +92,11 @@ export default function NoteForm({ onClose }: NoteFormProps) {
           <button type="button" className={css.cancelButton} onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" className={css.submitButton} disabled={false}>
+          <button
+            type="submit"
+            className={css.submitButton}
+            disabled={isPending}
+          >
             Create note
           </button>
         </div>
