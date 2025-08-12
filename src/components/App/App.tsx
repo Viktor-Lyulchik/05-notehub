@@ -18,21 +18,24 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
 
-  const handleChange = useDebouncedCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setQuery(event.target.value);
-      setCurrentPage(1);
-    },
-    300
-  );
+  const saveDebouncedQuery = useDebouncedCallback((query: string) => {
+    setDebouncedQuery(query);
+  }, 300);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
+    saveDebouncedQuery(event.target.value);
+    setCurrentPage(1);
+  };
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const { data, isLoading, isError, isSuccess } = useQuery({
-    queryKey: ['notes', query, currentPage],
-    queryFn: () => fetchNotes(query, currentPage),
+    queryKey: ['notes', debouncedQuery, currentPage],
+    queryFn: () => fetchNotes(debouncedQuery, currentPage),
     placeholderData: keepPreviousData,
   });
 
@@ -48,7 +51,7 @@ export default function App() {
     <>
       <div className={css.app}>
         <header className={css.toolbar}>
-          {<SearchBox onChange={handleChange} />}
+          {<SearchBox searchQuery={query} onChange={handleChange} />}
           {isSuccess && totalPages > 1 && (
             <Pagination
               totalPages={totalPages}
