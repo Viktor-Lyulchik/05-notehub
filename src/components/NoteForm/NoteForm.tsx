@@ -36,6 +36,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
     mutationFn: createNote,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
+      onClose();
     },
     onError() {
       toast.error('Error creating note!');
@@ -48,7 +49,6 @@ export default function NoteForm({ onClose }: NoteFormProps) {
   ) => {
     postMutation(values);
     formikHelpers.resetForm();
-    onClose();
   };
 
   return (
